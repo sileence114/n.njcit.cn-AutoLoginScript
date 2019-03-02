@@ -268,10 +268,10 @@ window.autoLogin.showPassword = function(){
 
 //登录成功能则关闭页面
 window.autoLogin.close = function(){
-	window.opener = null; 
-	window.open('', '_self'); 
+	window.opener = null;
+	window.open('', '_self');
 	window.close();
-	showResultBox($('#loginResult'), true, '(!)如果你看到了这条提示，则你的浏览器阻止了我关闭该标签页，请手动关闭。');
+	setTimeout("showResultBox($('#logoutResult'), true, ' ( ! ) 如果你看到了这条提示，则你的浏览器阻止了我关闭该标签页，请手动关闭。');",6000);
 }
 
 
