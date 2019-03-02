@@ -4,7 +4,7 @@
 // @version      3.0
 // @icon         http://n.njcit.cn/Public/Images/favicon.ico
 // @description  主要功能：在PCweb端添加手机端认证域；若网页打开没有登录则将自动登录。
-// @author       C选项_沉默（GitHub：Preliterate）
+// @author       C选项_沉默(GitHub：Preliterate)
 // @match        http://n.njcit.cn
 // @match        http://222.192.254.22
 // @match        http://n.njcit.cn/index.php
@@ -20,8 +20,10 @@
 // @note         2018.1.21-V1.0 放寒假了，咕咕咕~。
 // @note         2018.2.26-V2.0 使用jQuery通过自动填写表单、点击登录按钮登录，取消了直接通过$.ajax()提交认证。
 // @note         2018.2.28-V2.1 添加‘浏览器保存密码’选项，开启后不会用cookies保存密码；添加密码输入框‘悬浮显示密码功能’。
-// @note         2019.3.01-v3.0 添加关闭页面选项，若浏览器不阻止，则会登录完成自动关闭。
-// @note         2019.3.01-v3.0 若知道最新版的chrome浏览器怎么关闭的话还请提交issue。若没有大问题这个就是最终版本了。
+// @note         2019.3.01-v3.0 添加关闭页面选项，若浏览器不阻止，则会登录完成自动关闭，
+// @note                        若知道最新版的chrome浏览器怎么用javascript关闭标签的话还请提交issue。
+// @note         2019.3.02-v3.1 emmm……修改了一下窗口关闭的时机，如果未登录的话会帮你登录后关闭(还做了被浏览器阻止的弹窗提示)，
+// @note                        如果已登录的话不会执行任何操作了，也不会把窗口关掉了。(还把设置页面的标题改为了初音绿，叉会腰~)
 
 // ==/UserScript==
 
@@ -95,7 +97,10 @@ window.autoLogin.updateLoginStatus = function() {
 			if (autoLogin.loginStatus.status !== json.status) {
 				window.autoLogin.loginStatus = json;
 			}
-			window.autoLogin.writeFormAndLogin();
+			if(json.status===0){
+				window.autoLogin.writeFormAndLogin();
+				window.autoLogin.close();
+			}
 		}
 	});
 }
@@ -118,7 +123,7 @@ window.autoLogin.insertHTML = function() {
 	$('div.mLeft').append(
 `<form id="loginFormForAutoLogin" style="display: none;">
 	<div class="panel panel-default panel-transparent">
-		<div class="panel-heading" style='background-color: #428bca;'>
+		<div class="panel-heading" style='background-color: #39c5bb;'>
 			<h3 class="panel-title" style='color:white;'>自动登录脚本-自动登录设置</h3>
 		</div>
 		<div class="panel-body">
@@ -161,10 +166,10 @@ window.autoLogin.insertHTML = function() {
 				</div>
 				<div class="info-right">
 					<span id='savePasswordInCoookies'>
-						<a href="javascript:$('.info-right #savePasswordInCoookies').hide();$('.info-right #savePasswordInBrowser').show();window.autoLogin.savePasswordInCookies = 0;" title="请务必注意cookies安全，单击切换为浏览器保存密码。（需要浏览器支持）">cookies保存密码</a>
+						<a href="javascript:$('.info-right #savePasswordInCoookies').hide();$('.info-right #savePasswordInBrowser').show();window.autoLogin.savePasswordInCookies = 0;" title="请务必注意cookies安全，单击切换为浏览器保存密码。（需要浏览器支持）"><b>cookies保存密码</b></a>
 					</span>
 					<span id='savePasswordInBrowser'>
-						<a href="javascript:$('.info-right #savePasswordInBrowser').hide();$('.info-right #savePasswordInCoookies').show();window.autoLogin.savePasswordInCookies = 1;" title="单击切换为cookies保存密码">浏览器保存密码</a>
+						<a href="javascript:$('.info-right #savePasswordInBrowser').hide();$('.info-right #savePasswordInCoookies').show();window.autoLogin.savePasswordInCookies = 1;" title="单击切换为cookies保存密码"><b>浏览器保存密码</b></a>
 					</span>
 				</div>
 			</div>
@@ -221,20 +226,19 @@ window.autoLogin.updateForm = function(){
 
 //填写登录表单并登录
 window.autoLogin.writeFormAndLogin = function(){
-	if(Boolean(window.autoLogin.autoLoginSwitch)&&(!Boolean(window.autoLogin.loginStatus.status))){
+	if(Boolean(window.autoLogin.autoLoginSwitch)){
 		$('#loginForm #username').val(window.autoLogin.userInfo.username);
 		$('#loginForm #domain').find("option[value='" + window.autoLogin.userInfo.domain + "']").attr("selected", true);
 		if(Boolean(window.autoLogin.savePasswordInCookies)){
 			$('#loginForm #password').val(base64decode(window.autoLogin.userInfo.password));
 		}
 		else if(!Boolean($('#loginForm #password').val())){
-			showResultBox($('#loginResult'), false, '您的浏览器好像没有自动帮你输入密码，若您的浏览器不支持自动表单填写，请移步“自动登录设置”，开启cookies保存密码！', 20000);
+			showResultBox($('#loginResult'), false, '您的浏览器好像没有自动帮你输入密码，若您的浏览器不支持自动表单填写，请移步“自动登录设置”，开启cookies保存密码！');
 			console.log('登录失败');
 			return 0;
 		}
 		$("button#login").click();
 		console.log('已自动登录。');
-		window.autoLogin.close();
 	}
 }
 
@@ -267,6 +271,7 @@ window.autoLogin.close = function(){
 	window.opener = null; 
 	window.open('', '_self'); 
 	window.close();
+	showResultBox($('#loginResult'), true, '(!)如果你看到了这条提示，则你的浏览器阻止了我关闭该标签页，请手动关闭。');
 }
 
 
