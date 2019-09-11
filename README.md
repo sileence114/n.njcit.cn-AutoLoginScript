@@ -4,7 +4,7 @@
 # 食用:
 [AutoLoginScript.user.js](https://github.com/Preliterate/n.njcit.cn-AutoLoginScript/raw/master/AutoLoginScript.user.js)
 
-* 浏览器安装GreaseMonkey或者是TamperMonkey
+* 浏览器安装TamperMonkey([Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo),[Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/))或者是GreaseMonkey(Chrome需要科学上网)
 * 然后浏览器点击上方链接
 * 浏览器会自动提示是否安装
 * (如果不能弹窗的话，可以下载到本地后拖入浏览器即可)
