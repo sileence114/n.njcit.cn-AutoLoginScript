@@ -24,6 +24,7 @@
 // @note                        若知道最新版的chrome浏览器怎么用javascript关闭标签的话还请提交issue。
 // @note         2019.3.02-v3.1 emmm……修改了一下窗口关闭的时机，如果未登录的话会帮你登录后关闭(还做了被浏览器阻止的弹窗提示)，
 // @note                        如果已登录的话不会执行任何操作了，也不会把窗口关掉了。(还把设置页面的标题改为了初音绿，叉会腰~)
+// @note         2019.9.13-v3.2 修改了自动关闭页面的时机，已登录不会自动关闭页面。
 
 // ==/UserScript==
 
@@ -99,7 +100,6 @@ window.autoLogin.updateLoginStatus = function() {
 			}
 			if(json.status===0){
 				window.autoLogin.writeFormAndLogin();
-				window.autoLogin.close();
 			}
 		}
 	});
@@ -239,6 +239,7 @@ window.autoLogin.writeFormAndLogin = function(){
 		}
 		$("button#login").click();
 		console.log('已自动登录。');
+        window.autoLogin.close();
 	}
 }
 
