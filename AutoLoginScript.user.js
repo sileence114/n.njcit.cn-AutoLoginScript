@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         校园网自动登录
 // @namespace    http://tampermonkey.net/
-// @version      3.0
+// @version      3.2
 // @icon         http://n.njcit.cn/Public/Images/favicon.ico
 // @description  主要功能：在PCweb端添加手机端认证域；若网页打开没有登录则将自动登录。
 // @author       C选项_沉默(GitHub：Preliterate)
