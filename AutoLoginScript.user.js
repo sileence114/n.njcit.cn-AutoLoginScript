@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         校园网自动登录
 // @namespace    http://tampermonkey.net/
-// @version      3.2
+// @version      3.3
 // @icon         http://n.njcit.cn/Public/Images/favicon.ico
-// @description  主要功能：在PCweb端添加手机端认证域；若网页打开没有登录则将自动登录。
+// @description  主要功能：在PCweb端添加手机端认证域；可以设置网页打开没有登录时的自动登录。
 // @author       C选项_沉默(GitHub：Preliterate)
 // @match        http://n.njcit.cn
 // @match        http://222.192.254.22
@@ -25,12 +25,13 @@
 // @note         2019.3.02-v3.1 emmm……修改了一下窗口关闭的时机，如果未登录的话会帮你登录后关闭(还做了被浏览器阻止的弹窗提示)，
 // @note                        如果已登录的话不会执行任何操作了，也不会把窗口关掉了。(还把设置页面的标题改为了初音绿，叉会腰~)
 // @note         2019.9.13-v3.2 修改了自动关闭页面的时机，已登录不会自动关闭页面。
-
+// @note         2019.9.23-v3.3 加入自动关闭冷却时间，已登陆和未登录都会出发自动关闭，但距离上次关闭时间小于60秒都不会真正关闭页面。
+// @note                        去掉了未关闭的弹窗提示。未自动登录时能自动填充密码。
 // ==/UserScript==
 
 'use strict';
 
-console.log('n.njcit.cn\n校园网自动登录脚本已启用。\nGitHub:https://github.com/Preliterate/n.njcit.cn-AutoLoginScript')
+console.log('n.njcit.cn\n校园网自动登录脚本已启用。\nGitHub:https://github.com/Preliterate/n.njcit.cn-AutoLoginScript');
 
 // 新建一个Object用来存储所需要的信息
 window.autoLogin = {
@@ -99,8 +100,13 @@ window.autoLogin.updateLoginStatus = function() {
 				window.autoLogin.loginStatus = json;
 			}
 			if(json.status===0){
+                console.log('登录状态：未登录');
 				window.autoLogin.writeFormAndLogin();
 			}
+            else if(json.status===1 && json.info==="用户已登录"){
+                console.log('登录状态：已登录');
+                window.autoLogin.close();
+            }
 		}
 	});
 }
@@ -226,17 +232,17 @@ window.autoLogin.updateForm = function(){
 
 //填写登录表单并登录
 window.autoLogin.writeFormAndLogin = function(){
-	if(Boolean(window.autoLogin.autoLoginSwitch)){
-		$('#loginForm #username').val(window.autoLogin.userInfo.username);
-		$('#loginForm #domain').find("option[value='" + window.autoLogin.userInfo.domain + "']").attr("selected", true);
-		if(Boolean(window.autoLogin.savePasswordInCookies)){
-			$('#loginForm #password').val(base64decode(window.autoLogin.userInfo.password));
-		}
-		else if(!Boolean($('#loginForm #password').val())){
-			showResultBox($('#loginResult'), false, '您的浏览器好像没有自动帮你输入密码，若您的浏览器不支持自动表单填写，请移步“自动登录设置”，开启cookies保存密码！');
-			console.log('登录失败');
-			return 0;
-		}
+    $('#loginForm #username').val(window.autoLogin.userInfo.username);
+    $('#loginForm #domain').find("option[value='" + window.autoLogin.userInfo.domain + "']").attr("selected", true);
+    if(Boolean(window.autoLogin.savePasswordInCookies)){
+        $('#loginForm #password').val(base64decode(window.autoLogin.userInfo.password));
+    }
+    else if(!Boolean($('#loginForm #password').val())){
+        showResultBox($('#loginResult'), false, '您的浏览器好像没有自动帮你输入密码，若您的浏览器不支持自动表单填写，请移步“自动登录设置”，开启cookies保存密码！');
+        console.log('登录失败');
+        return 0;
+    }
+    if(Boolean(window.autoLogin.autoLoginSwitch)){
 		$("button#login").click();
 		console.log('已自动登录。');
         window.autoLogin.close();
@@ -269,13 +275,20 @@ window.autoLogin.showPassword = function(){
 
 //登录成功能则关闭页面
 window.autoLogin.close = function(){
-	window.opener = null;
-	window.open('', '_self');
-	window.close();
-	setTimeout("showResultBox($('#logoutResult'), true, ' ( ! ) 如果你看到了这条提示，则你的浏览器阻止了我关闭该标签页，请手动关闭。');",6000);
+    window.autoLogin.closeTime = new Date().getTime();
+    window.autoLogin.timecount = window.autoLogin.closeTime - parseInt($.cookie('autoLoginCloseTime'));
+    showResultBox($('#logoutResult'), true, '自动关闭剩余冷却时间：' + parseInt(60-window.autoLogin.timecount/1000).toString() + ' / 60 秒。',5000)
+    if(window.autoLogin.timecount>60000 || window.autoLogin.timecount<10){
+        $.cookie('autoLoginCloseTime', window.autoLogin.closeTime,{expires: 365});
+        window.close();
+        window.open('http://n.njcit.cn/', '_self');
+    }
+    if($.cookie('autoLoginCloseTime')===undefined){
+        $.cookie('autoLoginCloseTime', window.autoLogin.closeTime,{expires: 365});
+    }
 }
-
 
 window.autoLogin.insertHTML();
 window.autoLogin.showPassword();
 window.autoLogin.updateLoginStatus();
+
