@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         南京信息职业技术学院校园网自动登录
 // @namespace    http://tampermonkey.net/
-// @version      3.3.0
+// @version      3.4.0
 // @icon         http://n.njcit.cn/Public/Images/favicon.ico
 // @description  主要功能：在PCweb端添加手机端认证域；可以设置网页打开没有登录时的自动登录。
 // @author       C选项_沉默(GitHub：Preliterate, QQ：157970490)
@@ -39,7 +39,6 @@
 // @note         也许，不该裸考的…… 哎，我太南了。
 // @note         
 // @note         ================ 脚本维护人员招聘 ================ 脚本维护人员招聘  ================
-// @note         有个小哥和我说学校有了freestudent的认证域，好的，加了。
 
 // @match        http://n.njcit.cn
 // @match        http://222.192.254.22
@@ -64,6 +63,7 @@
 // @note         2019.9.23-v3.3 加入自动关闭冷却时间，已登陆和未登录都会出发自动关闭，但距离上次关闭时间小于60秒都不会真正关闭页面。
 // @note                        去掉了未关闭的弹窗提示。未自动登录时能自动填充密码。
 // @note         2020.7.03-v3.3 毕业了……在此处添加脚本维护人员……
+// @note         2020.9.24-v3.4 有个小哥和我说学校有了freestudent的认证域，好的，加了。
 // ==/UserScript==
 
 'use strict';
