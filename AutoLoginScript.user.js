@@ -152,7 +152,8 @@ window.autoLogin.insertHTML = function() {
 	//添加认证域
 	$("option").remove();
 	$("#domain").append(
-`<option value="studentphone" data-realm-type="0">student-phone</option>
+`<option value="studentphone" data-realm-type="0">freestudent</option>
+<option value="studentphone" data-realm-type="0">student-phone</option>
 <option value="phone" data-realm-type="0">phone</option>
 <option value="internet" data-realm-type="0">internet</option>
 <option value="baoyue50" data-realm-type="0">baoyue</option>
@@ -178,6 +179,7 @@ window.autoLogin.insertHTML = function() {
 			<div class="input-group row-space">
 				<span class="input-group-addon">@</span>
 				<select id="domainForAutoLogin" name="domain" class="form-control">
+					<option value="studentphone" data-realm-type="0">freestudent</option>
 					<option value="studentphone" data-realm-type="0">student-phone</option>
 					<option value="student" data-realm-type="0">student</option>
 					<option value="phone" data-realm-type="0">phone</option>
