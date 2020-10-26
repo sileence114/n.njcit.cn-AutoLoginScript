@@ -13,3 +13,6 @@
 # PS:
 这个应该是学习jQuery的成果吧。阅读了校园网登录页面脚本:[login.js](http://n.njcit.cn/Modules/Home/Public/Js/login.js)的代码。学到了很多。
 如果有什么建议还请提出。
+
+
+因本人已毕业，非重大BUG一般不会有更新维护了，请见谅。
